@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drum kit</title>
+    <link rel="stylesheet" href="style.css">
+   
+</head>
+
+<body>
+    <div class="keys">
+        <div data-key="65" class="key">
+            <kbd>A</kbd>
+            <span class="sound">clap</span>
+        </div>
+        <div data-key="83" class="key">
+            <kbd>S</kbd>
+            <span class="sound">hihat</span>
+        </div>
+        <div data-key="68" class="key">
+            <kbd>D</kbd>
+            <span class="sound">kick</span>
+        </div>
+        <div data-key="70" class="key">
+            <kbd>F</kbd>
+            <span class="sound">openhat</span>
+        </div>
+        <div data-key="71" class="key">
+            <kbd>G</kbd>
+            <span class="sound">boom</span>
+        </div>
+        <div data-key="72" class="key">
+            <kbd>H</kbd>
+            <span class="sound">ride</span>
+        </div>
+        <div data-key="74" class="key">
+            <kbd>J</kbd>
+            <span class="sound">snare</span>
+        </div>
+        <div data-key="75" class="key">
+            <kbd>K</kbd>
+            <span class="sound">tom</span>
+        </div>
+        <div data-key="76" class="key">
+            <kbd>L</kbd>
+            <span class="sound">tink</span>
+        </div>
+    </div>
+    <!-- The <kbd> tag is used to define keyboard input. The content inside is displayed in the browser's default monospace font. -->
+
+    <audio data-key="65" src="sounds/clap.wav"></audio>
+    <audio data-key="83" src="sounds/hihat.wav"></audio>
+    <audio data-key="68" src="sounds/kick.wav"></audio>
+    <audio data-key="70" src="sounds/openhat.wav"></audio>
+    <audio data-key="71" src="sounds/boom.wav"></audio>
+    <audio data-key="72" src="sounds/ride.wav"></audio>
+    <audio data-key="74" src="sounds/snare.wav"></audio>
+    <audio data-key="75" src="sounds/tom.wav"></audio>
+    <audio data-key="76" src="sounds/tink.wav"></audio>
+
+</body>
+
+<script>
+    function removeTransition(e) {
+        console.log(e);
+        if (e.propertyName !== 'transform') return; //確認propertyName是否為transform
+        e.target.classList.remove('playing');
+    }
+    //因為在css裡面playing中有使用到transition 這個屬性效果
+    //transition 效果結束之後會回傳的內容，在這裡我們就拿 propertyName = transform 這個來當指標，
+    //當transform 出來（也就是 transition 結束，transitionend 被觸發時），把 .playing 這個 class 移除。
+
+    function playSound(e){
+        //console.log(e.keyCode);
+        const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+        if (audio==null ){return;}  //  如果沒有按到對應的按鍵，則停止此函式
+        const key = document.querySelector(`div[data-key="${e.keyCode}"]`);//監聽使用者按鍵事件，並取得對應的元素
+        key.classList.add('playing'); //按下按鈕後加入屬性
+        audio.currentTime = 0;      //  讓每次回到音效檔的起始點
+        audio.play();
+    }
+    const keys = Array.from(document.querySelectorAll('.key'));  //抓取所有class=key的元件，成為NodeList
+    keys.forEach(key => key.addEventListener('transitionend', removeTransition));  //  利用 forEach 方法讀取 NodeList 並為每一個元素加上 transitionend 事件，事件執行時會促發 removeTransition 
+    //監聽按下鍵盤事件
+    window.addEventListener('keydown',playSound);
+</script>
+
+</html>
